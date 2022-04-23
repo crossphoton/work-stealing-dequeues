@@ -7,7 +7,7 @@
 #include <iostream>
 #include <stdio.h>
 #endif
-
+namespace wsq {
 class BDEQueue : public DEQueue {
 
 public:
@@ -17,7 +17,7 @@ public:
     this->bottom = 0;
   }
 
-  ~BDEQueue() { }
+  ~BDEQueue() {}
 
   void pushBottom(Runnable r) {
     this->tasks[bottom] = r;
@@ -68,5 +68,6 @@ public:
   }
 #endif
 };
+} // namespace wsq
 
 #endif

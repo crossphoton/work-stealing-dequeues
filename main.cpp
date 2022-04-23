@@ -1,75 +1,25 @@
-// #define __DEBUG_MODE // For testing purposes only
+#define __DEBUG_MODE // For testing purposes only
+#define __DEBUG_PRINT // For testing purposes only
+#define __DISABLE_STEALING // To disable stealing
+
 #include "B_DEQ.cpp"
 #include "UNB_DEQ.cpp"
 #include "WSQ.cpp"
+#include <functional>
 #include <iostream>
 #include <random>
 #include <thread>
-#include <vector>
 using namespace std;
+using namespace wsq;
 
-#define __DISABLE_STEALING
-
-class WorkStealingThread {
-  DEQueue **queue;
-  int me;
-  int totalQueues;
-
-public:
-  WorkStealingThread() {}
-  WorkStealingThread(int me, DEQueue **queue, int n) {
-    this->me = me;
-    this->queue = queue;
-    this->totalQueues = n;
-    srand(0);
-  }
-  int get_thread_id() { return this->me; }
-  void run() {
-    printf("starting work steal %d\n", me);
-    Runnable *task = queue[me]->popBottom();
-    int count = 0;
-    while (true) {
-      while (task != nullptr) {
-        printf("running\n");
-        task->run();
-        printf("ran\n");
-        task = queue[me]->popBottom();
-        count++;
-      }
-
-#ifndef __DISABLE_STEALING
-      while (task == nullptr) {
-        // std::this_thread::yield();
-        sleep(0);
-        int victim = 0;
-        for (; victim < totalQueues; victim++) {
-          if (victim == me || queue[victim]->isEmpty())
-            continue;
-          break;
-        }
-        if (victim + 1 >= totalQueues)
-          return;
-        if (!queue[victim]->isEmpty() && victim != me)
-          task = queue[victim]->popTop();
-        if (task != nullptr)
-          printf("work stole %d --> %d\n", victim, me);
-      }
-#else
-      return;
-#endif
-      sleep(0);
-    }
-  }
-};
-
-void add(int a, int b) { printf("testing and adding: %d\n", a + b); }
-
+// Runs a WorkStealingThread
 void thread_func(WorkStealingThread *wst) {
   wst->run();
   cout << "Exiting Thread_Func " << wst->get_thread_id() << endl;
 }
 
-void create_and_join_threads(int n, int k) {
+// Creates the work stealing thread with given runnable generator
+void create_and_join_threads(int n, int k, function<Runnable()> gen_runnable) {
   thread threads[n];
   DEQueue *queues[n];
   srand(time(0));
@@ -77,11 +27,9 @@ void create_and_join_threads(int n, int k) {
   for (int i = 0; i < n; i++) {
     // queues[i] = new BDEQueue(5);
     queues[i] = new BDEQueue(k);
-    int len = k;
-    for (int j = 0; j < len; j++) {
-      auto a = Runnable(add, 1, 1);
-      queues[i]->pushBottom(a);
-    }
+    int len = rand() % k;
+    for (int j = 0; j < len; j++)
+      queues[i]->pushBottom(gen_runnable());
   }
   for (int i = 0; i < n; i++) {
     WorkStealingThread *wst = new WorkStealingThread(i, queues, n);
@@ -93,11 +41,19 @@ void create_and_join_threads(int n, int k) {
   }
 }
 
-void a(Runnable *aa) { aa->run(); }
+void add(int a, int b) {
+  sleep(1);
+  printf("testing and adding: %d\n", a + b);
+}
 
 int main() {
   int n = 10, k = 1;
-  // cin >> n >> k;
-  create_and_join_threads(n, k);
-  // b.popTop()->task();
+  cin >> n >> k;
+
+  auto addRunnable = []() {
+    int a = rand() % 100, b = rand() % 100;
+    return Runnable(add, a, b);
+  };
+
+  create_and_join_threads(n, k, addRunnable);
 }

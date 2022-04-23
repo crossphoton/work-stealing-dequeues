@@ -3,18 +3,18 @@
 
 #include <atomic>
 #include <functional>
-#include <iostream>
-#include <random>
+#include <stdio.h>
 #include <thread>
 #include <unistd.h>
-#include <utility>
+
+namespace wsq {
 
 template <typename T> struct AtomicStamp {
   T value;
   int timestamp;
-  AtomicStamp(T data) : value(data), timestamp(0) {}
-  AtomicStamp() : timestamp(0) {}
-  AtomicStamp(T data, int stamp) : value(data), timestamp(stamp) {}
+  AtomicStamp(T data) noexcept : value(data), timestamp(0) {}
+  AtomicStamp() noexcept : timestamp(0) {}
+  AtomicStamp(T data, int stamp) noexcept : value(data), timestamp(stamp) {}
   bool operator==(const AtomicStamp<T> &other) const {
     return value == other.value && timestamp == other.timestamp;
   }
@@ -31,9 +31,6 @@ public:
   }
 
   bool compareAndSet(T oldRef, T newRef, int oldStamp, int newStamp) {
-    /* Creating a new object of type `AtomicStamp<T>` and assigning it to `old`.
-     */
-
     AtomicStamp<T> old = this->snap.load();
     AtomicStamp<T> newVal = AtomicStamp<T>(newRef, newStamp);
     return snap.compare_exchange_strong(old, newVal, std::memory_order_release,
@@ -70,12 +67,8 @@ public:
     this->task = [=]() { return f(args...); };
   }
   void run() {
-    printf("running inside  %ld\n", id);
     if (task != NULL)
       task();
-	else
-		printf("empty\n");
-    printf("ran inside  %ld\n", id);
   }
   Runnable() {}
 };
@@ -89,8 +82,61 @@ public:
   virtual bool isEmpty() = 0;
   virtual Runnable *popTop() = 0;
   virtual Runnable *popBottom() = 0;
-  void printQ();
-  // ~DEQueue() { delete top; }
 };
+
+class WorkStealingThread {
+  DEQueue **queue;
+  int me;
+  int totalQueues;
+
+public:
+  WorkStealingThread() {}
+  WorkStealingThread(int me, DEQueue **queue, int n) {
+    this->me = me;
+    this->queue = queue;
+    this->totalQueues = n;
+    srand(0);
+  }
+  int get_thread_id() { return this->me; }
+  void run() {
+#ifdef __DEBUG_PRINT
+    printf("starting work steal %d\n", me);
+#endif
+    Runnable *task = queue[me]->popBottom();
+    int count = 0;
+    while (true) {
+      while (task != nullptr) {
+        task->run();
+        task = queue[me]->popBottom();
+        count++;
+      }
+
+#ifndef __DISABLE_STEALING
+      while (task == nullptr) {
+        std::this_thread::yield();
+        int victim = 0;
+        for (; victim < totalQueues; victim++) {
+          if (victim == me || queue[victim]->isEmpty())
+            continue;
+          break;
+        }
+        if (victim + 1 >= totalQueues)
+          return;
+        if (!queue[victim]->isEmpty() && victim != me)
+          task = queue[victim]->popTop();
+
+#ifdef __DEBUG_PRINT
+        if (task != nullptr)
+          printf("work stole %d --> %d\n", victim, me);
+#endif
+      }
+#else
+      return;
+#endif
+      sleep(0);
+    }
+  }
+};
+} // namespace wsq
 
 #endif

@@ -4,8 +4,10 @@
 #include "B_DEQ.cpp"
 
 #ifdef __DEBUG_MODE
-
+#include <stdio.h>
 #endif
+
+namespace wsq {
 
 class CircularArray {
   int logCapacity;
@@ -109,5 +111,6 @@ public:
 };
 
 int UnboundedDEQueue::LOG_CAPACITY = 4;
+} // namespace wsq
 
 #endif
