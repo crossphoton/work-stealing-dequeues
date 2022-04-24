@@ -1,7 +1,7 @@
 #ifndef _PCP_B_DEQUEUE
 #define _PCP_B_DEQUEUE
 
-#include "WSQ.cpp"
+#include "WSQ.h"
 
 #ifdef __DEBUG_MODE
 #include <iostream>
