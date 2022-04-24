@@ -58,7 +58,7 @@ void add(task_data *result, int n) {
 
 
 task_data *arr;
-int count=0;
+int res_arr_count=0;
 int main() {
   int n = 10, k = 1;
   cin >> n >> k;
@@ -66,13 +66,13 @@ int main() {
   arr=new task_data[n*k];
   auto addRunnable = []() {
     int a = rand() % 10;
-    arr[count].n=a;
-    return Runnable(add, &arr[count++], a);
+    arr[res_arr_count].n=a;
+    return Runnable(add, &arr[res_arr_count++], a);
   };
 
   create_and_join_threads(n, k, addRunnable);
 
-  for (int i=0;i<count;i++){
+  for (int i=0;i<res_arr_count;i++){
     cout<<arr[i].n<<"\t"<<arr[i].res<<endl;
   }
 }
