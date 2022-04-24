@@ -103,7 +103,7 @@ public:
   void printQ() {
     printf("..................\n");
     for (int i = top->getReference(); i < bottom; i++) {
-      printf("%d\t", this->tasks->get(i)->id);
+      printf("%ld\t", this->tasks->get(i)->id);
     }
     printf("\n..................\n");
   }

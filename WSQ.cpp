@@ -58,9 +58,9 @@ public:
 long __runnable_id = 0;
 class Runnable {
   long _gen_id() { return ++__runnable_id; }
-  long id;
 
 public:
+  long id;
   std::function<void()> task = NULL;
   template <typename func, typename... Args> Runnable(func f, Args... args) {
     id = _gen_id();

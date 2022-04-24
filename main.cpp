@@ -1,3 +1,4 @@
+#include <utility>
 #define __DEBUG_MODE // For testing purposes only
 #define __DEBUG_PRINT // For testing purposes only
 #define __DISABLE_STEALING // To disable stealing
@@ -15,7 +16,7 @@ using namespace wsq;
 // Runs a WorkStealingThread
 void thread_func(WorkStealingThread *wst) {
   wst->run();
-  cout << "Exiting Thread_Func " << wst->get_thread_id() << endl;
+  printf("Exiting Thread_Func %d \n",wst->get_thread_id());
 }
 
 // Creates the work stealing thread with given runnable generator
@@ -41,19 +42,37 @@ void create_and_join_threads(int n, int k, function<Runnable()> gen_runnable) {
   }
 }
 
-void add(int a, int b) {
-  sleep(1);
-  printf("testing and adding: %d\n", a + b);
+long long fib(int n) {
+  if(n <= 1) return n;
+  return fib(n-1)+fib(n-2);
+}
+struct task_data{
+  int n;
+  long long res;
+
+};
+void add(task_data *result, int n) {
+  result->res = fib(n);
+  printf("testing and adding: %d ---> %lld\n", n, result->res);
 }
 
+
+task_data *arr;
+int count=0;
 int main() {
   int n = 10, k = 1;
   cin >> n >> k;
 
+  arr=new task_data[n*k];
   auto addRunnable = []() {
-    int a = rand() % 100, b = rand() % 100;
-    return Runnable(add, a, b);
+    int a = rand() % 10;
+    arr[count].n=a;
+    return Runnable(add, &arr[count++], a);
   };
 
   create_and_join_threads(n, k, addRunnable);
+
+  for (int i=0;i<count;i++){
+    cout<<arr[i].n<<"\t"<<arr[i].res<<endl;
+  }
 }
