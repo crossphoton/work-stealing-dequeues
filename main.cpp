@@ -1,7 +1,7 @@
 // #define __DEBUG_PRINT
 #define __DISABLE_STEALING
 #include <cstdio>
-#define WITH_BDEQUEUE // If not defined unbounded queue is used
+// #define WITH_BDEQUEUE // If not defined unbounded queue is used
 
 #include "WSQ.h"
 #include "task.h"
@@ -27,6 +27,8 @@ int main(int argc, char **argv) {
     return 1;
   }
   int n = atoi(argv[1]), k = atoi(argv[2]);
+
+  init(n, k);
   
   auto start = getEpoch();
   create_and_join_threads(n, k, runnable_generator);
