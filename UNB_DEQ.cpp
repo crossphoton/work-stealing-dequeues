@@ -1,7 +1,7 @@
 #ifndef _PCP_UNB_DEQUEUE
 #define _PCP_UNB_DEQUEUE
 
-#include "B_DEQ.cpp"
+#include "WSQ.h"
 
 #ifdef __DEBUG_MODE
 #include <stdio.h>
