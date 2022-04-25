@@ -10,6 +10,7 @@
 #include <iostream>
 #include <random>
 #include <thread>
+#include <cstring>
 using namespace std;
 using namespace wsq;
 
@@ -93,7 +94,7 @@ int main(int argc, char **argv) {
 
   arr=new task_data[n*k];
   auto addRunnable = []() {
-    int a = rand() % 10;
+    int a = rand() % 25;
     arr[res_arr_count].n=a;
     return Runnable(fib_thread, &arr[res_arr_count++], a);
   };
@@ -102,7 +103,7 @@ int main(int argc, char **argv) {
   create_and_join_threads(n, k, addRunnable, isBounded, enableStealing);
   auto end = getEpoch();
 
-  cout <<"Time taken: " << end - start << endl;
+  cout <<"Time taken: " << end - start << " us" << endl;
 
   // for (int i=0;i<res_arr_count;i++){
   //   cout<<arr[i].n<<"\t"<<arr[i].res<<endl;
