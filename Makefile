@@ -1,4 +1,4 @@
-build:
+build: clean
 	@mkdir ./bin
 	@g++ -pthread --std=c++17 ./benchmark/main.cpp -o ./bin/fibo.o
 

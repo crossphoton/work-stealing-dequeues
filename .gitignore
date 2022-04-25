@@ -33,6 +33,3 @@
 
 # Logs
 *.log
-
-/bin
-/logs
