@@ -3,9 +3,9 @@
 #define __DEBUG_PRINT // For testing purposes only
 #define __DISABLE_STEALING // To disable stealing
 
-#include "B_DEQ.cpp"
-#include "UNB_DEQ.cpp"
-#include "WSQ.cpp"
+#include "./../src/B_DEQ.cpp"
+#include "./../src/UNB_DEQ.cpp"
+#include "./../src/WSQ.cpp"
 #include <functional>
 #include <iostream>
 #include <random>
