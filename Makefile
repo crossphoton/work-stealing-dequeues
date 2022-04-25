@@ -1,8 +1,8 @@
 build: clean
 	@mkdir ./bin
-	@g++ -pthread --std=c++17 ./benchmark/main.cpp -o ./bin/fibo.o
+	@g++ -pthread --std=c++17 ./benchmark/fibo.cpp -o ./bin/fibo.o
 
-run: clean build
+run: build
 	@mkdir -p ./logs
 	
 	@./bin/fibo.o 100 100 unbounded > ./logs/unbounded_steal.log
