@@ -1,6 +1,6 @@
 build:
 	@mkdir ./bin
-	@g++ --std=c++17 ./benchmark/main.cpp -o ./bin/fibo.o
+	@g++ -pthread --std=c++17 ./benchmark/main.cpp -o ./bin/fibo.o
 
 run: clean build
 	@mkdir -p ./logs
@@ -28,4 +28,4 @@ run: clean build
 	@tail -1 ./logs/bounded_NoSteal.log
 
 clean:
-	rm -rf ./bin ./logs
+	@rm -rf ./bin ./logs
