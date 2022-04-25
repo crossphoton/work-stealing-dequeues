@@ -89,7 +89,7 @@ int main(int argc, char **argv) {
       enableStealing = false;   
     }
   }
-  cout << "n: " << n << " k: " << k << " bounded: " << isBounded << "enableStealing: " << enableStealing << endl;
+  cout << "n: " << n << " k: " << k << " bounded: " << isBounded << " enableStealing: " << enableStealing << endl;
 
   arr=new task_data[n*k];
   auto addRunnable = []() {
@@ -104,7 +104,7 @@ int main(int argc, char **argv) {
 
   cout <<"Time taken: " << end - start << endl;
 
-  for (int i=0;i<res_arr_count;i++){
-    cout<<arr[i].n<<"\t"<<arr[i].res<<endl;
-  }
+  // for (int i=0;i<res_arr_count;i++){
+  //   cout<<arr[i].n<<"\t"<<arr[i].res<<endl;
+  // }
 }
