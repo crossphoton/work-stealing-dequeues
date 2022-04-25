@@ -88,20 +88,20 @@ class WorkStealingThread {
   DEQueue **queue;
   int me;
   int totalQueues;
+  bool enable;
 
 public:
   WorkStealingThread() {}
-  WorkStealingThread(int me, DEQueue **queue, int n) {
+  WorkStealingThread(int me, DEQueue **queue, int n,bool enable_ws) {
     this->me = me;
     this->queue = queue;
     this->totalQueues = n;
+    this->enable = enable_ws;
     srand(0);
   }
   int get_thread_id() { return this->me; }
   void run() {
-#ifdef __DEBUG_PRINT
-    printf("starting work steal %d\n", me);
-#endif
+    // printf("starting work steal %d\n", me);
     Runnable *task = queue[me]->popBottom();
     int count = 0;
     while (true) {
@@ -110,8 +110,8 @@ public:
         task = queue[me]->popBottom();
         count++;
       }
-
-#ifndef __DISABLE_STEALING
+      if(!enable)
+        break;
       while (task == nullptr) {
         std::this_thread::yield();
         int victim = 0;
@@ -125,18 +125,13 @@ public:
         if (!queue[victim]->isEmpty() && victim != me)
           task = queue[victim]->popTop();
 
-#ifdef __DEBUG_PRINT
         if (task != nullptr)
           printf("work stole %d --> %d\n", victim, me);
-#endif
       }
-#else
-      return;
-#endif
       sleep(0);
     }
   }
 };
-} // namespace wsq
+}
 
 #endif
