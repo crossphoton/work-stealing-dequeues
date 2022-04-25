@@ -7,9 +7,9 @@
 #include <stdio.h>
 #include <vector>
 
-#define FIB_LIMIT 10
+#define FIB_LIMIT 20
 
-uint64_t TASK_ID = 0;
+long long TASK_ID = 0;
 
 struct fib_task {
   uint64_t id;
@@ -33,17 +33,15 @@ void lambda(fib_task *task) {
   // fprintf(stdout, "working for %d\n", task->n);
   uint64_t result = fib(task->n);
   *task = fib_task(task->id, task->n, result);
-  usleep(1000);
   // fprintf(stdout, "completed %d  -> %ld\n", task->n, result);
 }
 
 void init(int n, int k) {
-  tasks = new fib_task[n*k];
+  tasks = (fib_task *)malloc(sizeof(fib_task) * n * k);
 }
 
-
 wsq::Runnable runnable_generator() {
-  int n = 3 + (rand() % FIB_LIMIT);
+  int n = 15 + (rand() % FIB_LIMIT);
   fib_task task(++TASK_ID, n);
   tasks[task.id] = task;
 
@@ -51,8 +49,9 @@ wsq::Runnable runnable_generator() {
 }
 
 void collect_results(long duration, long start, long end) {
-  fprintf(stdout, "total tasks done: %ld in %ldms\nid\t\t\tindex\t\t\tresult\n",
+  fprintf(stdout, "total tasks done: %lld in %ldus\nid\t\t\tindex\t\t\tresult\n",
           TASK_ID, duration);
-  for (int i=0; i<TASK_ID; i++)
-    fprintf(stdout, "%ld\t\t\t%d\t\t\t%ld\n", tasks[i].id, tasks[i].n, tasks[i].result);
+  for (int i = 0; i < TASK_ID; i++)
+    fprintf(stdout, "%ld\t\t\t%d\t\t\t%ld\n", tasks[i].id, tasks[i].n,
+            tasks[i].result);
 }

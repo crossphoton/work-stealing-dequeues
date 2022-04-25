@@ -88,6 +88,7 @@ class WorkStealingThread {
   DEQueue **queue;
   int me;
   int totalQueues;
+  bool enableStealing;
 
 public:
   WorkStealingThread() {}
@@ -95,6 +96,13 @@ public:
     this->me = me;
     this->queue = queue;
     this->totalQueues = n;
+    srand(0);
+  }
+  WorkStealingThread(int me, DEQueue **queue, int n, bool enableStealing) {
+    this->me = me;
+    this->queue = queue;
+    this->totalQueues = n;
+    this->enableStealing = enableStealing;
     srand(0);
   }
   int get_thread_id() { return this->me; }

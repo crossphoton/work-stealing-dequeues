@@ -1,12 +1,11 @@
-// #define __DEBUG_PRINT
-#define __DISABLE_STEALING
+#define __DEBUG_PRINT
 #include <cstdio>
-// #define WITH_BDEQUEUE // If not defined unbounded queue is used
 
 #include "WSQ.h"
 #include "task.h"
 #include "wsq_runner.cpp"
 #include <stdlib.h>
+#include <string.h>
 
 long getEpoch()
 {
@@ -19,19 +18,21 @@ long getEpoch()
 
 int main(int argc, char **argv) {
   srand(time(0));
-  if (argc < 3) {
+  if (argc < 5) {
     fprintf(stderr,
-            "not enough command arguments provided.\nrequired = 2 ; provided = "
+            "not enough command arguments provided.\nrequired = 4 ; provided = "
             "%d\n",
             argc);
     return 1;
   }
   int n = atoi(argv[1]), k = atoi(argv[2]);
+  bool bounded = strcmp(argv[3],"bounded");
+  bool enableStealing = atoi(argv[4]) == 1;
 
   init(n, k);
   
   auto start = getEpoch();
-  create_and_join_threads(n, k, runnable_generator);
+  create_and_join_threads(n, k, runnable_generator, bounded, enableStealing);
   auto end = getEpoch();
 
   collect_results(end-start, start, end);

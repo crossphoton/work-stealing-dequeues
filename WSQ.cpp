@@ -24,29 +24,26 @@ void WorkStealingThread::run() {
       count++;
     }
 
-#ifndef __DISABLE_STEALING
-    while (task == nullptr) {
-      std::this_thread::yield();
-      int victim = 0;
-      for (; victim < totalQueues; victim++) {
-        if (victim == me || queue[victim]->isEmpty())
-          continue;
-        break;
-      }
-      if (victim + 1 >= totalQueues)
-        return;
-      if (!queue[victim]->isEmpty() && victim != me)
-        task = queue[victim]->popTop();
+    if (this->enableStealing) {
+      while (task == nullptr) {
+        std::this_thread::yield();
+        int victim = 0;
+        for (; victim < totalQueues; victim++) {
+          if (victim == me || queue[victim]->isEmpty())
+            continue;
+          break;
+        }
+        if (victim + 1 >= totalQueues)
+          return;
+        if (!queue[victim]->isEmpty() && victim != me)
+          task = queue[victim]->popTop();
 
-#ifdef __DEBUG_PRINT
-      if (task != nullptr)
-        printf("work stole %d --> %d\n", victim, me);
-#endif
-    }
-#else
-    return;
-#endif
-    sleep(0);
+        if (task != nullptr)
+          printf("work stole %d --> %d\n", victim, me);
+      }
+    } else
+      return;
+    std::this_thread::yield();
   }
 }
 
