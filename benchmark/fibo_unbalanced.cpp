@@ -38,6 +38,7 @@ void fib_thread(task_data *result, int n)
 
 task_data *arr;
 int res_arr_count = 0;
+int total_count;
 
 int main(int argc, char **argv)
 {
@@ -67,10 +68,20 @@ int main(int argc, char **argv)
 
   /* Creating an array of task_data structs. */
   arr = new task_data[n * k];
+  total_count=n*k;
+
   /* A lambda function which is used to generate a runnable. */
-  auto addRunnable = []()
+  auto addRunnable = [=]()
   {
-    int a = 25+rand() % 5;
+    int a;  
+    if(int(total_count/2)>res_arr_count)
+    {
+      a = 25;
+    }
+    else
+    {
+      a = 1;
+    }
     arr[res_arr_count].n = a;
     arr[res_arr_count].createdAt = getEpoch();
     return Runnable(fib_thread, &arr[res_arr_count++], a);
@@ -80,16 +91,14 @@ int main(int argc, char **argv)
   auto start = getEpoch();
   create_and_join_threads(n, k, addRunnable, isBounded, enableStealing);
   auto end = getEpoch();
-
+  cout << "Time taken: " << end - start << " us" << endl;
   long long wait_time = 0;
   for (int i=0;i<res_arr_count;i++)
   {
-    wait_time += arr[i].completedAt - arr[i].createdAt; 
+    wait_time += (arr[i].completedAt - arr[i].createdAt); 
+    cout<<"fib("<<arr[i].n<<")="<<arr[i].res<<endl;
   }
+
   cout << "Time taken: " << end - start << " us" << endl;
   cout << "Average Waiting Time: " << wait_time/res_arr_count << " us" << endl;
-
-  // for (int i=0;i<res_arr_count;i++){
-  //   cout<<arr[i].n<<"\t"<<arr[i].res<<endl;
-  // }
 }
