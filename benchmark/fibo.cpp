@@ -2,56 +2,21 @@
 #define __DEBUG_MODE       // For testing purposes only
 #define __DEBUG_PRINT      // For testing purposes only
 #define __DISABLE_STEALING // To disable stealing
-
-#include "./../src/B_DEQ.cpp"
-#include "./../src/UNB_DEQ.cpp"
-#include "./../src/WSQ.cpp"
-#include "./../src/utills.cpp"
-#include <functional>
 #include <iostream>
 #include <random>
-#include <thread>
 #include <cstring>
+#include "./utills.cpp"
 using namespace std;
 using namespace wsq;
 
-// Runs a WorkStealingThread
-void thread_func(WorkStealingThread *wst)
-{
-  wst->run();
-  printf("Exiting Thread_Func %d \n", wst->get_thread_id());
-}
-
-// Creates the work stealing thread with given runnable generator
-void create_and_join_threads(int n, int k, function<Runnable()> gen_runnable, bool isBounded, bool enableStealing)
-{
-  thread threads[n];
-  DEQueue *queues[n];
-  srand(time(0));
-
-  for (int i = 0; i < n; i++)
-  {
-    // queues[i] = new BDEQueue(5);
-    if (isBounded)
-      queues[i] = new BDEQueue(k);
-    else
-      queues[i] = new UnboundedDEQueue(k);
-    int len = rand() % k;
-    for (int j = 0; j < len; j++)
-      queues[i]->pushBottom(gen_runnable());
-  }
-  for (int i = 0; i < n; i++)
-  {
-    WorkStealingThread *wst = new WorkStealingThread(i, queues, n, enableStealing);
-    threads[i] = thread(thread_func, wst);
-  }
-
-  for (int i = 0; i < n; i++)
-  {
-    threads[i].join();
-  }
-}
-
+/**
+ * "If n is less than or equal to 1, return n. Otherwise, return the sum of the previous two Fibonacci
+ * numbers."
+ *
+ * @param n The number of fibonacci numbers to generate.
+ *
+ * @return The nth number in the Fibonacci sequence.
+ */
 long long fib(int n)
 {
   if (n <= 1)
@@ -62,6 +27,8 @@ struct task_data
 {
   int n;
   long long res;
+  long long createdAt;
+  long long completedAt;
 };
 void fib_thread(task_data *result, int n)
 {
@@ -70,6 +37,7 @@ void fib_thread(task_data *result, int n)
 
 task_data *arr;
 int res_arr_count = 0;
+
 int main(int argc, char **argv)
 {
   /* Used to seed the random number generator. */
