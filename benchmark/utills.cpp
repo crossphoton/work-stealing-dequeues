@@ -65,6 +65,17 @@ void create_and_join_threads(int n, int k, function<Runnable()> gen_runnable, bo
     threads[i] = thread(thread_func, wst);
   }
 
+// CODE FOR REALTIME SIMULATION
+  // int MAX_ITER = 1000;
+  // while (MAX_ITER--)
+  // {
+
+  //   int pushTo=rand()%n;
+  //   cout<<"Pushing to "<<pushTo<<endl;
+  //   queues[pushTo]->pushBottom(gen_runnable());  /* code */
+  // }
+  
+
   for (int i = 0; i < n; i++)
   {
     threads[i].join();

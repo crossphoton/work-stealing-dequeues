@@ -84,11 +84,6 @@ namespace wsq
       bottom = oldBottom + 1;
     }
 
-    /**
-     * If the top of the queue is less than the bottom of the queue, then return the top of the queue
-     *
-     * @return A Runnable object.
-     */
     Runnable *popTop()
     {
       int oldTop = top->getReference();

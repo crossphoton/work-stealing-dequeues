@@ -81,13 +81,14 @@ int main(int argc, char **argv)
   create_and_join_threads(n, k, addRunnable, isBounded, enableStealing);
   auto end = getEpoch();
 
-  long long wait_time = 0;
+  unsigned long long wait_time = 0;
   for (int i=0;i<res_arr_count;i++)
   {
     wait_time += arr[i].completedAt - arr[i].createdAt; 
   }
   cout << "Time taken: " << end - start << " us" << endl;
   cout << "Average Waiting Time: " << wait_time/res_arr_count << " us" << endl;
+  cout << "Tasks=" << res_arr_count << endl;
 
   // for (int i=0;i<res_arr_count;i++){
   //   cout<<arr[i].n<<"\t"<<arr[i].res<<endl;

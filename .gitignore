@@ -33,3 +33,7 @@
 
 # Logs
 *.log
+*.txt
+
+.vscode/
+.DS_Store
