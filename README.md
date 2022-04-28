@@ -33,3 +33,7 @@ or
 ```
 $ @rm -rf ./bin ./logs
 ```
+
+## Contributors
+- [@crossphoton](http://github.com/crossphoton)
+- [@KushagraIndurkhya](http://github.com/KushagraIndurkhya)
