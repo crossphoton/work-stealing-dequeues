@@ -1,6 +1,6 @@
 build: clean
 	@mkdir ./bin
-	@g++ -pthread --std=c++17 ./benchmark/$(application).cpp -o ./bin/app.out
+	@g++ -pthread --std=c++17 ./benchmark/$(app).cpp -o ./bin/app.out
 
 run:
 	@mkdir -p ./logs
